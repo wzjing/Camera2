@@ -216,14 +216,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        startBackgroundThread();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            if (Build.VERSION.SDK_INT >= 23) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA}, 1024);
-            }
+        if (surfaceView.isActivated()) {
+
         } else {
-            openCamera(1080, 1920);
+            surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
+                @Override
+                public void surfaceCreated(SurfaceHolder holder) {
+                    startBackgroundThread();
+                    if (ContextCompat.checkSelfPermission(MainActivity.this,
+                            Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        if (Build.VERSION.SDK_INT >= 23) {
+                            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1024);
+                        }
+                    } else {
+                        openCamera(1080, 1920);
+                    }
+                }
+
+                @Override
+                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+                }
+
+                @Override
+                public void surfaceDestroyed(SurfaceHolder holder) {
+
+                }
+            });
         }
+
     }
 
     @Override
@@ -295,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // TODO: Optimal preview size
-                mPreviewSize = new Size(1080, 1920);
+                mPreviewSize = new Size(maxPreviewWidth, maxPreviewHeight);
                 int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     //TODO: Configure SurfaceView size
@@ -511,6 +533,5 @@ public class MainActivity extends AppCompatActivity {
                     CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
         }
     }
-
 
 }
