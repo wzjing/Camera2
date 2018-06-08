@@ -60,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    private int MAX_PREVIEW_WIDTH = 0;
-    private int MAX_PREVIEW_HEIGHT = 0;
+    private int MAX_PREVIEW_WIDTH = 1080;
+    private int MAX_PREVIEW_HEIGHT = 1920;
 
     private final int STATE_PREVIEW = 0x1;
     private final int STATE_WAITING_LOCK = 0x2;
@@ -147,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
             mCameraOpenCloseLock.release();
             mCameraDevice.close();
             mCameraDevice = null;
-            // TODO: ACTIVITY
             finish();
         }
     };
@@ -296,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Point displaySize = new Point();
                 getWindowManager().getDefaultDisplay().getSize(displaySize);
+                Log.d(TAG, String.format("DisplaySize: %d x %d", displaySize.x, displaySize.y));
                 int rotatedPreviewWidth = width;
                 int rotatedPreviewHeight = height;
                 int maxPreviewWidth = displaySize.x;
@@ -317,6 +317,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // TODO: Optimal preview size
+                Log.d(TAG, String.format("PreviewSize: %d x %d", maxPreviewWidth, maxPreviewHeight));
                 mPreviewSize = new Size(maxPreviewWidth, maxPreviewHeight);
                 int orientation = getResources().getConfiguration().orientation;
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
